@@ -86,4 +86,11 @@ export class AppController {
   getItem(@Param('id') id) {
     return this.items.find((item) => item.id == id);
   }
+
+  // delete item
+  @Post('/items/:id')
+  deleteItem(@Param('id') id) {
+    this.items = this.items.filter((item) => item.id != id);
+    return this.items;
+  }
 }
