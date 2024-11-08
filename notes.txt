@@ -1,0 +1,15 @@
+@Query = ?queryParmas=something : key, value pairs.
+@Body = JSON body
+@Param = parameters, for the path. such as /items/1 or /items/:id for a specific path
+
+
+
+app.modules.ts:
+    controllers: [AppController],
+    providers: [AppService],
+
+
+nest g resource <name>
+
+typeorm:
+    npm install --save @nestjs/typeorm typeorm mysql2
