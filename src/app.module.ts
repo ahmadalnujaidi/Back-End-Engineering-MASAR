@@ -5,19 +5,21 @@ import { ItemModule } from './item/item.module';
 import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+const entitiesPath = 'dist/**/*.entity{.ts,.js}';
+
 @Module({
   imports: [
     ItemModule,
     UsersModule,
     TypeOrmModule.forRoot({
-      type: 'postgres', // Change to your database type
+      type: 'postgres',
       host: 'localhost',
       port: 5432,
       username: 'postgres',
       password: '',
       database: 'masar-db',
       autoLoadEntities: true,
-      retryAttempts: 3,
+      entities: [entitiesPath],
       synchronize: false,
       logging: false,
     }),

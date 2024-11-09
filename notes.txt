@@ -13,3 +13,6 @@ nest g resource <name>
 
 typeorm:
     npm install --save @nestjs/typeorm typeorm mysql2
+
+for windows:
+    "typeorm": "ts-node -r tsconfig-paths/register -T --files ./node_modules/typeorm/cli.js -d ./ormconfig.ts"

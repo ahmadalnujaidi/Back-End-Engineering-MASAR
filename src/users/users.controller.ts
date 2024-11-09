@@ -1,34 +1,81 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
+import { DataSource } from 'typeorm';
+import { User } from './entities/user.entity';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly dataSource: DataSource) {}
 
+  // create user
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  async create(@Body() body) {
+    const userRepo = this.dataSource.getRepository(User);
+    const user = new User();
+    // user.fullName = 'ahmad';
+    // user.age = 21;
+    const { fullName, age } = body;
+    user.fullName = fullName;
+    user.age = age;
+
+    if (!fullName || !age) {
+      return { message: 'please provide all required fields' };
+    }
+
+    await userRepo.save(user);
+    return { message: 'user created successfully', user: user };
   }
 
+  // get all users
   @Get()
-  findAll() {
-    return this.usersService.findAll();
+  async findAll() {
+    const userRepo = this.dataSource.getRepository(User);
+    const users = await userRepo.find();
+    return users;
   }
 
+  // get specific user
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+  async findOne(@Param('id') id: number) {
+    const userRepo = this.dataSource.getRepository(User);
+    const user = await userRepo.findOne({ where: { id } });
+    if (!user) {
+      return { message: 'user not found' };
+    }
+    return user;
   }
 
+  // update user
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+  async update(@Param('id') id: number, @Body() body) {
+    const userRepo = this.dataSource.getRepository(User);
+    const user = await userRepo.findOne({ where: { id } });
+    if (!user) {
+      return { message: 'user not found' };
+    }
+    const { fullName, age } = body;
+    user.fullName = fullName;
+    user.age = age;
+    await userRepo.save(user);
+    return { message: 'user updated successfully', user: user };
   }
 
+  // delete user
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+  async remove(@Param('id') id: number) {
+    const userRepo = this.dataSource.getRepository(User);
+    const user = await userRepo.findOne({ where: { id } });
+    if (!user) {
+      return { message: 'user not found' };
+    }
+    await userRepo.remove(user);
+    return { message: 'user deleted successfully' };
   }
 }
