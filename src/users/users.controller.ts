@@ -19,8 +19,6 @@ export class UsersController {
   async create(@Body() body) {
     const userRepo = this.dataSource.getRepository(User);
     const user = new User();
-    // user.fullName = 'ahmad';
-    // user.age = 21;
     const { fullName, age } = body;
     user.fullName = fullName;
     user.age = age;
